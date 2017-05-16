@@ -9,6 +9,7 @@ Alan Papalia, Daniel Brockwell and Aynel Guel
 Implementation of simple search engines using well known algorithms like PageRank and tf-idf (simplified version)
 
 ### Way of Work
+To be continued
 
 ### Github
 - git status (see what files are changed, probably in red)
