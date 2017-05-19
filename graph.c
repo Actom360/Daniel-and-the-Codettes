@@ -5,6 +5,7 @@ typedef struct GraphRep {
    int   nV;    // #vertices
    int   nE;    // #edges
    int **edges; // matrix of booleans
+   char **urls; // array for urls
 } GraphRep;
 
 Graph newGraph(int nV)
@@ -21,7 +22,7 @@ Graph newGraph(int nV)
    }
    Graph g = malloc(sizeof(GraphRep));
    assert(g != NULL);
-   g->nV = nV;  g->nE = 0;  g->edges = e;
+   g->nV = nV;  g->nE = 0;  g->edges = e; g->urls = calloc(nV, sizeof(char *));
    return g;
 }
 
