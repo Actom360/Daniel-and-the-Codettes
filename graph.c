@@ -4,19 +4,6 @@
 /* basic directed graph type */
 typedef struct GraphRep *Graph;
 
-
-// GraphRep has to include V and E
-typedef struct GraphRep {
-   int  nV;  // # vertices
-   int  nE;  // # edges
-   ...
-   // Representation for vertices
-   // e.g. array [0..nV-1] of Items
-   ...
-   // Representation for edges
-   // some possibilities to be discussed shortly
-} GraphRep;
-
 // is a vertex valid in a given Graph?
 static int validV(Graph g, Vertex v)
 {
