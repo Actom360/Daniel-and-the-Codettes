@@ -1,14 +1,5 @@
-// main file
-
-
 /* basic directed graph type */
 typedef struct GraphRep *Graph;
-
-// is a vertex valid in a given Graph?
-static int validV(Graph g, Vertex v)
-{
-   return (g != NULL && v >= 0 && v < g->nV);
-}
 
 typedef struct GraphRep {
    int   nV;    // #vertices
@@ -35,7 +26,6 @@ Graph newGraph(int nV)
    return g;
 }
 
-
 void insertE(Graph g, Edge e)
 {
    assert(validG(g) && validE(g,e));
@@ -53,7 +43,6 @@ void removeE(Graph g, Edge e)
    g->edges[e.w][e.v] = 0;
    g->nE--;
 }
-
 
 int validG(Graph g) {
 	return (g != NULL);   // other checks?
