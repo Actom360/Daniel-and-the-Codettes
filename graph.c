@@ -64,3 +64,5 @@ int validV(Graph g, Vertex v) {
 int validE(Graph g, Edge e) {
 	return (validV(g,e.v) && validV(g,e.w));
 }
+
+
