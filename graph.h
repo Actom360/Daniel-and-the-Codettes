@@ -15,6 +15,8 @@ Edge mkEdge(Graph, Vertex, Vertex);
 Graph newGraph(int nV);  // #vertices
 void  insertE(Graph, Edge);
 void  removeE(Graph, Edge);
-Graph copy(Graph);
-void  destroy(Graph);
-void  show(Graph);
+int validG(Graph g);
+int validV(Graph g, Vertex v);
+int validE(Graph g, Edge e);
+void addURL(Graph, char *);
+void printURLs(Graph);
