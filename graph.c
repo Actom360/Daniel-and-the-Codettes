@@ -17,7 +17,7 @@ typedef struct GraphRep {
    int   nE;    // #edges
    int **edges; // matrix of booleans
    char **urls; // array for urls
-   int urlCnt;
+   int urlCnt;  // num of URLs in graph
 } GraphRep;
 
 Graph newGraph(int nV)
@@ -72,29 +72,55 @@ int validE(Graph g, Edge e) {
 }
 
 void addURL(Graph g, char *newURL){
-   // printf("Added: %s\n", newURL);
-   g->urls[g->urlCnt++] = newURL;
-   printf("Added: %s to position %d\n\n", g->urls[g->urlCnt-1], g->urlCnt -1);
-   // printf("Array: %s\n", g->urls[(g->urlCnt) - 1]);
-
+   printf("add to prove im not tupid%s\n", newURL);
+   g->urls[g->urlCnt] = newURL;
+   g->urlCnt++;
 }
 
 void printURLs(Graph g){
-   printf("beginning to print\n");
-   for (int i = 0; i < g->urlCnt; i++)
+   printf("beginning to print %d urls\n", g->urlCnt);
+   // for (int i = 0; i < g->urlCnt; i++)
    {
-      int len = strlen(g->urls[i]);
-      printf("%d\n", len);
 
-      for (int k = 0; k < 5; k++)
+      // int len = strlen(g->urls[i]);
+      // printf("%d : %d\n", len, i);
+
+      int cnt = 0;
+
+      for (int k = 0; k < 6*g->urlCnt; k++)
       {
-         printf("%c", g->urls[i][k]);
+         if(k == (6*cnt)){
+            printf(" (k = %d) ", k);
+            cnt++;
+            // printf(", ");
+         }  
+
+         char c = g->urls[0][k];
+         if (c != '\n')
+         {
+            printf("%c", c); 
+         }
+         else if (c == '\0')
+         {
+            printf("N");
+         } 
+         else
+         {
+            printf("S");         
+         } 
+
+         
       }
-      printf("%d\n", len);
+      printf("\n\n");
+
 
    }
 }
 
 int getURLCount(Graph g){
    return g->urlCnt;
+}
+
+void freeGraph(Graph g){
+
 }
