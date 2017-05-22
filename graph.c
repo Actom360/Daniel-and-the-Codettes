@@ -23,18 +23,23 @@ typedef struct GraphRep {
 Graph newGraph(int nV)
 {
    assert(nV >= 0);
-   int i, j;
-   int **e = malloc(nV * sizeof(int *));
-   assert(e != NULL);
+   int i;
+   int **e = calloc(nV, sizeof(int *));
+   char ** u = calloc(nV, sizeof(char *));
+
+   assert(e != NULL && u != NULL);
+
    for (i = 0; i < nV; i++) {
-      e[i] = malloc(nV * sizeof(int));
-      assert(e[i] != NULL);
-      for (j = 0; j < nV; j++)
-         e[i][j] = 0;
+      e[i] =  calloc(nV , sizeof(int));
+      u[i] = calloc(5, sizeof(char));
+
+      // assert(e[i] != NULL);
+      // for (j = 0; j < nV; j++)
+      //    e[i][j] = 0;
    }
    Graph g = malloc(sizeof(GraphRep));
    assert(g != NULL);
-   g->nV = nV;  g->nE = 0;  g->edges = e; g->urls = calloc(nV, sizeof(char *)); g->urlCnt = 0;
+   g->nV = nV;  g->nE = 0;  g->edges = e; g->urls = u;  g->urlCnt = 0;
    return g;
 }
 
@@ -69,22 +74,27 @@ int validE(Graph g, Edge e) {
 void addURL(Graph g, char *newURL){
    // printf("Added: %s\n", newURL);
    g->urls[g->urlCnt++] = newURL;
-   // printf("Array: %s\n", g->urls[g->urlCnt - 1]);
+   printf("Added: %s to position %d\n\n", g->urls[g->urlCnt-1], g->urlCnt -1);
+   // printf("Array: %s\n", g->urls[(g->urlCnt) - 1]);
 
 }
 
 void printURLs(Graph g){
-   // printf("begginning to print\n");
-   // for (int i = 0; i < g->urlCnt; i++)
-   // {
-   //    int len = strlen(g->urls[i]);
-   //    printf("%d\n", len);
+   printf("beginning to print\n");
+   for (int i = 0; i < g->urlCnt; i++)
+   {
+      int len = strlen(g->urls[i]);
+      printf("%d\n", len);
 
-   //    for (int k = 0; k < 5; k++)
-   //    {
-   //       printf("%c", g->urls[i][k]);
-   //    }
-   //    printf("%d\n", len);
+      for (int k = 0; k < 5; k++)
+      {
+         printf("%c", g->urls[i][k]);
+      }
+      printf("%d\n", len);
 
-   // }
+   }
+}
+
+int getURLCount(Graph g){
+   return g->urlCnt;
 }
