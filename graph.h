@@ -1,3 +1,6 @@
+#ifndef GRAPH_H
+#define GRAPH_H
+
 // graph representation is hidden
 typedef struct GraphRep *Graph;
 
@@ -21,3 +24,5 @@ int validE(Graph g, Edge e);
 void addURL(Graph, char *);
 void printURLs(Graph);
 int getURLCount(Graph g);
+
+#endif
