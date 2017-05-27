@@ -17,26 +17,29 @@ char* getAllURLs(int n) //store all URLs in collection.txt in one large String w
 
     char line[BUFSIZE];							//var to hold line of text for loop below
     
-    int len = 0, prevLen = 0, cnt = 0; 			//counter variables
+    int len = 0, prevLen = 0, cnt = 0, addPos = 0; 			//counter variables
     int end;									//end of last url added, to properly finish full string
 
 	assert(coll != NULL);  						//check file to read
+
 
 	char *allURLs = malloc(BUFSIZE);				//to hold all URLs in one String
 	char lastChar = 'a'; 						//to track last character added to 'allURLs'
 
 	while(fgets(line, BUFSIZE, coll) != NULL) { //read File line by line, store in String 'line'
-		
+
 		len = strlen(line);
+		cnt = 0;
 		
 		while(cnt < len){
-			if(line[cnt] == '\n' || lastChar == ' '){ //if about to add newline or would cause more than one " " in allURLs
+
+			if(line[cnt] == '\n' || (lastChar == ' ' && line[cnt] == ' ')){ //if about to add newline or would cause more than one " " in allURLs
 				cnt++;
 				continue;
 			}
 
-			allURLs[prevLen+cnt] = line[cnt];		//add new char to allURLs
-			lastChar = allURLs[cnt];				//update lastChar added
+			allURLs[addPos++] = line[cnt];		//add new char to allURLs
+			lastChar = line[cnt];				//update lastChar added
 			end = prevLen + cnt;
 			cnt++;
 		}
@@ -47,9 +50,10 @@ char* getAllURLs(int n) //store all URLs in collection.txt in one large String w
 
 	if(allURLs[end] != ' ') end++;		//increment to ensure not writing over url address
 
+
+
 	allURLs[end] = '\0';				//finish string
 
-	printf("%s\n", allURLs); 
 	return allURLs;
 }
 
@@ -58,24 +62,39 @@ char* getAllURLs(int n) //store all URLs in collection.txt in one large String w
 
 
 
-char **parseStringBySpaces(char *allURLs, int n)	//parses string and returns array of words contained
+char **parseStringBySpaces(char *string, int n)	//parses string and returns array of words contained
 {
-	char *url;
+	char *tok;
 	char *delim = " ";	//delimiter for parsing urls
 	int cnt = 0, len = 0;
-	char **urlArr = calloc(n, sizeof(char*));	//array to hold urls
+	char **urlArr = malloc(n * sizeof(char*));	//array to hold urls
+
+ 	
+	tok = strtok(string, delim);
+	len = strlen(tok);
 	for (int i = 0; i < n; i++)
 	{
-		urlArr[i] = malloc(12*sizeof(char));
+		urlArr[i] = malloc(6*sizeof(char));
 	}
 
-	while((url = strtok(allURLs, delim)) != NULL) { //Iterate through to end of collection file, read line in coll and put inside String 'line'
-		len = strlen(url);
-		printf("parsing: %s  length: %d\n", url, len);
+	printf("parsing: %s  length: %d\n", tok, len);
+	strcpy(urlArr[cnt++], tok);
 
-		strcpy(urlArr[cnt], url);
-		cnt++;	
+
+
+	while((tok = strtok(NULL, delim)) != NULL) { //Iterate through to end of collection file, read line in coll and put inside String 'line'
+		len = strlen(tok);
+		printf("parsing: %s  length: %d\n", tok, len);
+		strcpy(urlArr[cnt++], tok);
 	} 
+
+	printf("\n\n" );
+
+
+	for (int i = 0; i < n; ++i)
+	{
+		printf("print urls: %s\n", 	urlArr[i]);
+	}
 
 	return urlArr;
 }
@@ -85,15 +104,46 @@ char **parseStringBySpaces(char *allURLs, int n)	//parses string and returns arr
 
 
 
-int numURLs(char *allURLs)  //counts number of urls in string
+// int numURLs(char *allURLs)  //counts number of urls in string
+// {
+
+// 	int cnt = 0;
+// 	int len = strlen(allURLs);
+
+// 	for (int i = 0; i < len - 2; i++)
+// 	{
+// 		if(allURLs[i] == 'u' && allURLs[i+1] == 'r' && allURLs[i+2] == 'l') cnt++;
+// 	}
+
+// 	return cnt;
+// }
+
+int numWords(char *string)  //counts number of urls in string
 {
 
 	int cnt = 0;
-	int len = strlen(allURLs);
+	int len = strlen(string);
+	int inWord = (string[0] != ' '); 			//Boolean to track if 'inside' word during iteration
+	
+	if(inWord) cnt++;
 
-	for (int i = 0; i < len - 2; i++)
+	char curChar;
+
+	for (int i = 0; i < len; i++)
 	{
-		if(allURLs[i] == 'u' && allURLs[i+1] == 'r' && allURLs[i+2] == 'l') cnt++;
+
+		curChar = string[i];
+		if (inWord)
+		{
+			if(curChar == ' '){
+				inWord = FALSE;
+			}
+
+		}
+		else if(string[i] != ' '){
+				cnt++;
+				inWord = TRUE;
+		}
 	}
 
 	return cnt;
@@ -134,7 +184,7 @@ char * linksInURL(char * url)
 	char *allURLs = malloc(BUFSIZE);	//to hold all URLs in one String
 	char lastChar = 'a'; 	//to track last character added to 'allURLs'
 
-	int len = 0, cnt = 0, end = 0;
+	int len = 0, cnt = 0, end = 0, addPos = 0;
 
 	while(fgets(line, BUFSIZE, f) != NULL) { 	//read File line by line, store in String 'line'
 		
@@ -151,7 +201,7 @@ char * linksInURL(char * url)
 					continue;
 				}
 
-				allURLs[cnt] = line[cnt];	//add new char to allURLs
+				allURLs[addPos++] = line[cnt];	//add new char to allURLs
 				lastChar = allURLs[cnt];				//update lastChar added
 				end = cnt;
 				cnt++;
@@ -184,7 +234,7 @@ char * wordsInURL(char * url)
 	char *allURLs = malloc(BUFSIZE);	//to hold all URLs in one String
 	char lastChar = 'a'; 	//to track last character added to 'allURLs'
 
-	int len = 0, cnt = 0, prevLen = 0, end = 0;	//for filling new string
+	int len = 0, cnt = 0, prevLen = 0, end = 0, addPos = 0;	//for filling new string
 	int beginReading = 0;	//Boolean to track when to read for words
 
 	while(fgets(line, BUFSIZE, f) != NULL) { //read File line by line, store in String 'line'
@@ -207,7 +257,7 @@ char * wordsInURL(char * url)
 					continue;
 				}
 
-				allURLs[prevLen+cnt] = tolower(line[cnt]);	//add new char to allURLs
+				allURLs[addPos++] = tolower(line[cnt]);	//add new char to allURLs
 				lastChar = allURLs[cnt];				//update lastChar added
 				end = prevLen + cnt;
 				cnt++;

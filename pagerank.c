@@ -8,22 +8,36 @@
 
 #define BUFSIZE 1024
  
+void printStringArr(char ** arr);
+
 
 int main(int argc, char const *argv[])
 {
 
-		char *urlColl = getAllURLs();		//get all URLs in collection.txt
-		int numURLTot = numURLs(urlColl);	//get number of URLs
+	char *urlColl = getAllURLs();		//get all URLs in collection.txt
+	int numURLTot = numWords(urlColl);	//get number of URLs
 
 
-		char ** allURLs =  parseStringBySpaces(urlColl);
+	char ** allURLs =  parseStringBySpaces(urlColl, numURLTot);
 
-		for (int i = 0; i < numURLTot; i++)
-		{
-			printf("%c\n", allURLs[i][0]);
-		}
+	printStringArr(allURLs);
+
  
     return 0;
+}
+
+
+
+
+
+void printStringArr(char ** arr) //for testing purposes
+{
+	int len = sizeof(arr)-1;
+
+	for (int i = 0; i < len; i++)
+	{
+		printf("%s\n", arr[i]);
+	}
 }
 
 

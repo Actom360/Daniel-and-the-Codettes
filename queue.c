@@ -1,11 +1,11 @@
-// queue.c ... simple Queue of Strings
+// Pqueue.c ... simple PQueue of Strings
 // Written by John Shepherd, September 2015
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
 #include <string.h>
-#include "queue.h"
+#include "pqueue.h"
 
 typedef struct Node *Link;
 
@@ -14,38 +14,38 @@ typedef struct Node {
 	Link  next;
 } Node;
 	
-typedef struct QueueRep {
+typedef struct PQueueRep {
 	Link  front;
 	Link  back;
-} QueueRep;
+} PQueueRep;
 
 // Function signatures
 
-Queue newQueue();
-void disposeQueue(Queue);
-void enterQueue(Queue,char *);
-char *leaveQueue(Queue);
-int  emptyQueue(Queue);
-void showQueue(Queue q);
+PQueue newPQueue();
+void disposePQueue(PQueue);
+void enterPQueue(PQueue,char *);
+char *leavePQueue(PQueue);
+int  emptyPQueue(PQueue);
+void showPQueue(PQueue q);
 
 static Link newNode(char *);
 static void disposeNode(Link);
 
 
-// newQueue()
-// - create an initially empty Queue
-Queue newQueue()
+// newPQueue()
+// - create an initially empty PQueue
+PQueue newPQueue()
 {
-	Queue new = malloc(sizeof(QueueRep));
+	PQueue new = malloc(sizeof(PQueueRep));
 	assert(new != NULL);
 	new->front = NULL;
 	new->back = NULL;
 	return new;
 }
 
-// disposeQueue(Queue)
-// - clean up memory associated with Queue
-void disposeQueue(Queue q)
+// disposePQueue(PQueue)
+// - clean up memory associated with PQueue
+void disposePQueue(PQueue q)
 {
 	if (q == NULL) return;
 	Link next, curr = q->front;
@@ -56,23 +56,38 @@ void disposeQueue(Queue q)
 	}
 }
 
-// enterQueue(Queue,Str)
-// - add Str to back of Queue
-void enterQueue(Queue q, char *str)
+// enterPQueue(PQueue,Str)
+// - add Str to back of PQueue
+void enterPQueue(PQueue q, char *str)
 {
+	Node cur = q->back;
+	Node prev;
+
 	Link new = newNode(str);
 	if (q->front == NULL)
 		q->front = q->back = new;
 	else {
-		// add into list of elems
-		q->back->next = new;
-		q->back = new;
+
+		//find place to add
+		if(strcmp(str, cur->val) < 0){
+			while(strcmp(str,cur->val) < 0 && cur->next != NULL) {
+				prev = cur;
+				cur = cur->next; 
+			}
+
+			new->next = cur;
+			prev->next = new;
+		} else {
+			// add to back
+			q->back->next = new;
+			q->back = new;
+		}
 	}
 }
 
-// leaveQueue(Queue)
-// - return string at front of Queue
-char *leaveQueue(Queue q)
+// leavePQueue(PQueue)
+// - return string at front of PQueue
+char *leavePQueue(PQueue q)
 {
 	assert (q->front != NULL);
     char *str = q->front->val;
@@ -84,22 +99,22 @@ char *leaveQueue(Queue q)
 	return str;
 }
 
-// emptyQueue(Queue)
-// - true if Queue is empty
-int emptyQueue(Queue q)
+// emptyPQueue(PQueue)
+// - true if PQueue is empty
+int emptyPQueue(PQueue q)
 {
 	return (q->front == NULL);
 }
 
-// showQueue(Queue)
-// - display Queue (for debugging)
-void showQueue(Queue q)
+// showPQueue(PQueue)
+// - display PQueue (for debugging)
+void showPQueue(PQueue q)
 {
 	Link curr;
 	if (q->front == NULL)
-		printf("Queue is empty\n");
+		printf("PQueue is empty\n");
 	else {
-		printf("Queue (front-to-back):\n");
+		printf("PQueue (front-to-back):\n");
 		int id = 0;
 		curr = q->front;
 		while (curr != NULL) {
