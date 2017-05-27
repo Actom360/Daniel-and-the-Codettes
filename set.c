@@ -30,7 +30,7 @@ void insertInto(Set,char *);
 void dropFrom(Set,char *);
 int  isElem(Set,char *);
 int  nElems(Set);
-char * popLeastStr(Set);
+char * popString(Set);
 
 static Link newNode(char *);
 static void disposeNode(Link);
@@ -154,6 +154,16 @@ void showSet(Set s)
 		}
 	}
 }
+
+char *popString(Set s)
+{
+	int len = strlen(s->elems->val);
+	char *word = malloc(len*sizeof(char) + 8);
+	strcpy(word, s->elems->val);
+	dropFrom(s, word);
+	return word;
+}
+
 
 // Helper functions
 
