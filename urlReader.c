@@ -9,7 +9,7 @@
 
 void getAllUrls();
 
-char* getAllURLs() //store all URLs in one large String with spaces between 
+char* getAllURLs() //store all URLs in collection.txt in one large String with spaces between 
 {
 	FILE *coll = fopen("collection.txt", "r"); //open file
 
@@ -50,7 +50,11 @@ char* getAllURLs() //store all URLs in one large String with spaces between
 }
 
 
-char **parseURLs(char *allURLs, int n)	//parses string and makes array of URLs
+
+
+
+
+char **parseURLs(char *allURLs, int n)	//parses string and returns array of URLs (set)
 {
 	char *url;
 	char *delim = " ";	//delimiter for parsing urls
@@ -67,13 +71,45 @@ char **parseURLs(char *allURLs, int n)	//parses string and makes array of URLs
 }
 
 
-int numURLs(char *allURLs){
+
+
+
+
+int numURLs(char *allURLs)  //counts number of urls
+{
 
 	int cnt = 0;
+	int len = strlen(allURLs);
 
-	while((url = strtok(allURLs, delim)) != NULL) { //iterate through 
-		cnt++;
+	for (int i = 0; i < len - 2; i++)
+	{
+		if(allURLs[i] == 'u' && allURLs[i+1] == 'r' && allURLs[i+2] == 'l') cnt++;
 	}
 
 	return cnt;
 }
+
+
+//store all links in specified URL page in one String with spaces between URLs
+//NOTE: 'url' should be passed as "urlXX" not "urlXX.txt"
+char * linksInURL(char * url, int num)	
+{
+	int len = strlen(url)
+	char urlFile[len+4];
+	
+	for (int i = 0; i < len; i++)
+	{
+		urlFile[i] = url[i];
+	}
+
+	urlFile[len+1] = '.';
+	urlFile[len+2] = 't';
+	urlFile[len+3] = 'x';
+	urlFile[len+4] = 't';
+
+	char linksArr [num][BUFSIZE];
+}
+
+
+
+
