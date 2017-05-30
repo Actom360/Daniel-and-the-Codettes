@@ -8,7 +8,7 @@
 char * getAllURLs();								
 
 //parses strings by spaces between words given n number of words
-char ** parseStringBySpaces(char *allURLs, int);		
+char ** parseStringBySpaces(char *allURLs);		
 
 //counts number of words/URLs in string
 int numWords(char *string);						
@@ -19,7 +19,11 @@ char * linksInURL(char * url);
 
 //finds all words in URL file and returns in normalized format
 //pass as "urlXX" not "urlXX.txt"
-char * wordsInURL(char * url);					
+char * wordsInURL(char * url);	
+
+//takes input string and removes invalid URLs				
+char *getValidURLs(char *allURLs);
+
 
 
 

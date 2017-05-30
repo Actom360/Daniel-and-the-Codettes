@@ -2,8 +2,11 @@
 
 CC = gcc
 CFLAGS = -Wall -Werror -g
-PR = pagerank.o queue.o graph.o urlReader.o
+PR = pagerank.o queue.o graph.o urlReader.o set.o
 INV = inverted.o set.o urlReader.o
+EXEC = inverted pagerank
+
+all: $(EXEC)
 
 inverted : $(INV)
 	$(CC) -o inverted $(INV)

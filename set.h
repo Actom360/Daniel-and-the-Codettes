@@ -18,6 +18,8 @@ void dropFrom(Set,char *);
 int  isElem(Set,char *);
 int  nElems(Set);
 void showSet(Set);
+
+//returns array of all strings in Set
 char **getElemArr(Set s);
 
 //removes and returns 1st string in Set (1st in alphabetical order)

@@ -30,6 +30,7 @@ void insertInto(Set,char *);
 void dropFrom(Set,char *);
 int  isElem(Set,char *);
 int  nElems(Set);
+char **getElemArr(Set);
 char * popString(Set);
 
 static Link newNode(char *);
@@ -104,16 +105,17 @@ char **getElemArr(Set s)
 {
 	assert(s != NULL);
 
-	char ** strArr = malloc(nElems(s)*sizeof(char *));
-	for (int i = 0; i < nElems(s); i++)
-	{
-		strArr[i] = malloc(20 * sizeof(char));
-	}
+	char ** strArr = malloc(nElems(s)*sizeof(char *)); //column for every elem in Set
 
 	Node *n = s->elems;
+	char str[20];
+	int len = 0;
 	for(int i = 0; i < nElems(s); i++){
-		strcpy(strArr[i], n->val);
-		n = n->next;
+		strcpy(str, n->val);							//get word in node
+		len = strlen(str);								//get len of word
+		strArr[i] = malloc((len+1) * sizeof(char));		//malloc for size of word
+		strcpy(strArr[i], str);							//fill spot in array
+		n = n->next;									//increment to next node
 	}
 
 	return strArr;

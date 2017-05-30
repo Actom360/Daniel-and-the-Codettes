@@ -49,6 +49,8 @@ void fillWordSets(IndexStruct * indexArray, int n);
 void fillStructArr(IndexStruct * indexArray, char **urlArr, int n);
 Set combineWordSets(IndexStruct * indexArray, int n);
 char *findRelURLs(char *word, IndexStruct *indArr, int n);
+int getNumStrInArr(char ** arr);
+
 
 
 
@@ -59,7 +61,7 @@ int main(int argc, char const *argv[])
 	char *urlColl = getAllURLs();		//get all URLs in collection.txt
 
 	int numURLTot = numWords(urlColl);	//get number of URLs
-	char ** allURLs =  parseStringBySpaces(urlColl, numURLTot);	//get array of all URLs
+	char ** allURLs =  parseStringBySpaces(urlColl);	//get array of all URLs
 	IndexStruct * wordsInURLs = malloc(numURLTot*sizeof(IndexStruct));	//initialize array to hold all IndexStructs
 	fillStructArr(wordsInURLs, allURLs, numURLTot);		//fill array with IndexStructs constructed from the array of all URLs
 	fillWordSets(wordsInURLs, numURLTot); //fill wordSets for each URL
@@ -68,6 +70,10 @@ int main(int argc, char const *argv[])
 	int nWords = nElems(allWords);								//total number of unique words across all files
 	char uniqWords [nWords][20];
 
+
+	char **test = getElemArr(allWords);
+	printf("%d\n", nWords);
+	printStringArr(test);
 
 	//fills uniqWords in alphabetical ascending order
 	//note that allWords will be empty after loop has run
@@ -130,8 +136,6 @@ void fillStructArr(IndexStruct * indexArray, char **urlArr, int n)
 		ind = newIndex(urlArr[i]);
 		indexArray[i] = *ind;
 	}
-
-	// printf("\n\ncleared fillStructArr\n\n");
 }
 
 //fills all wordSets in indexArray
@@ -154,15 +158,13 @@ void fillWordSets(IndexStruct * indexArray, int n)
 
 		nWords = numWords(words);
 
-		wordArr =  parseStringBySpaces(words, nWords);
+		wordArr =  parseStringBySpaces(words);
 
 		for (int j = 0; j < nWords; j++)
 		{
 			insertInto(indexArray[i].wordSet, wordArr[j]);
 		}
 	}
-	// printf("\n\ncleared fillWordSets\n\n");
-
 }
 
 
@@ -190,9 +192,6 @@ Set combineWordSets(IndexStruct * indexArray, int n)
 
 	}
 
-	// printf("\n\ncleared combineWordSets\n\n");
-
-
 	return s;
 }
 
@@ -201,15 +200,24 @@ Set combineWordSets(IndexStruct * indexArray, int n)
 
 //prints any array of strings
 //for testing purposes
+
 void printStringArr(char ** arr) 
 {
-	int len = sizeof(arr)-1;
+	int len = getNumStrInArr(arr);
+
+	printf("\n\nTesting:%d\n\n", len);
 
 	for (int i = 0; i < len; i++)
 	{
 		printf("%s\n", arr[i]);
 	}
-	// printf("\n\ncleared printStringArr\n\n");
 }
 
+int getNumStrInArr(char ** arr)
+{
+	int cnt = 0;
+	while(arr[cnt++] != NULL);
+
+	return cnt-1;
+}
 
