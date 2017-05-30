@@ -11,13 +11,6 @@
 
 
 
-
-
-
-
-
-
-
 void printStringArr(char ** arr, int n);
 int getNumStrInArr(char ** arr);
 int findURLPos(char * url, char **allURLs, int numURLs);
@@ -42,10 +35,10 @@ int main(int argc, char const *argv[])
 	char *urlColl = getAllURLs();		//get all URLs in collection.txt
 	strcpy(urlColl, getValidURLs(urlColl));
 
-	printf("%s\n", urlColl);
+	// printf("%s\n", urlColl);
 	
 	int numURLTot = numWords(urlColl);	//get number of URLs
-	printf("there are %d URLs\n", numURLTot);
+	// printf("there are %d URLs\n", numURLTot);
 
 	if (numURLTot == 0)
 	{
@@ -82,7 +75,7 @@ int main(int argc, char const *argv[])
 	Graph g = newGraph(numURLTot);
 	fillGraphEdges(g, allURLs, numURLTot);
 
-	//showGraph(g, allURLs); //was for testing
+	// showGraph(g, allURLs); //was for testing
 
 
 
@@ -99,13 +92,22 @@ int main(int argc, char const *argv[])
 			diff += fabs(prVals[i] - prVals1[i]);
 
 			prVals[i] = prVals1[i];
+			// printf("%f\n", prVals1[i]);
 		}
 
 	}
+	// printf("diff: %f, it: %d\n", diff, it); //understand end conditions
 
 
 
 	printResults(allURLs, outArr, prVals1, numURLTot);
+
+	float sum = 0.0;
+	for (int i = 0; i < numURLTot; i++)
+	{
+		sum += prVals1[i];
+	}
+	// printf("Sum: %f\n", sum);	//results sum to 1
  
     return 0;
 }
@@ -194,7 +196,10 @@ void fillGraphEdges(Graph g, char ** allURLs, int n)
 		strcpy(outLinks, getValidURLs(outLinks));	//eliminate invalid links
 
 
-		if(strcmp(outLinks, "") == 0) {printf("no outgoing links %s\n\n", outLinks); continue;}			//in case that there are no outgoing URLs
+		if(strcmp(outLinks, "") == 0) {				//in case that there are no outgoing URLs
+			// printf("no outgoing links %s\n\n", outLinks);
+			continue;
+		}			
 
 		int numURLs = numWords(outLinks);
 		outLinkArr = parseStringBySpaces(outLinks);
@@ -229,7 +234,13 @@ void calcPRs(Graph g, float * prVals, float *prVals1, float d, int n, int *outAr
 		}
 
 		float pr = (1.0-d)/((float)n);
+
+		// printf("Base: %f\n", pr);
+
 		pr += d*sum;
+
+		// printf("Tot: %f\n", pr);
+
 
 		prVals1[i] = pr;
 	}

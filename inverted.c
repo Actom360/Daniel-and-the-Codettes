@@ -71,9 +71,9 @@ int main(int argc, char const *argv[])
 	char uniqWords [nWords][20];
 
 
-	char **test = getElemArr(allWords);
-	printf("%d\n", nWords);
-	printStringArr(test);
+	// char **test = getElemArr(allWords);
+	// printf("%d\n", nWords);
+	// printStringArr(test);
 
 	//fills uniqWords in alphabetical ascending order
 	//note that allWords will be empty after loop has run
