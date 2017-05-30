@@ -134,7 +134,7 @@ void printResults(char **allURL, int *outA, float * prV, int num)
 		cnt++;
 	}
 
-	FILE *f = fopen("pagerankList1.txt", "w");		//file to write to
+	FILE *f = fopen("pagerankList.txt", "w");		//file to write to
 
 	int nextURL = sortedURLs[0];
 	for (int i = 0; i < num; i++)
