@@ -5,7 +5,8 @@ CFLAGS = -Wall -Werror -g
 PR = pagerank.o queue.o graph.o urlReader.o set.o
 INV = inverted.o set.o urlReader.o
 SPR = searchPagerank.o set.o urlReader.o
-EXEC = inverted pagerank searchPagerank
+STFLDF = searchTfldf.o set.o urlReader.o
+EXEC = inverted pagerank searchPagerank searchTfldf
 
 
 all: $(EXEC)
@@ -19,9 +20,13 @@ pagerank : $(PR)
 searchPagerank: $(SPR)
 	$(CC) -o searchPagerank $(SPR)
 
+searchTfldf : $(STFLDF)
+	$(CC) -o searchTfldf $(STFLDF)
+
 pagerank.o: pagerank.c queue.h graph.h urlReader.h
 inverted.o: inverted.c urlReader.h set.h
 searchPagerank.o: searchPagerank.c set.h urlReader.h
+searchTfldf.o: searchTfldf.c set.h urlReader.h
 
 queue.o: queue.c queue.h
 graph.o: graph.c graph.h
