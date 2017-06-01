@@ -1,4 +1,5 @@
 // searchTfIdf.c
+// gcc searchTfIdf.c -o searchTfIdf
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -12,12 +13,55 @@
 #define FALSE 0
 #define BUFSIZE 1024
 
-// functions getting allURLs etc.
 
 
-Set getURLSet(char *string);							/* function prototype declarations */
+typedef struct WordStruct {
+
+	char*	word;
+	char** 	urls;
+	int 	nUrls;
+	float*	tfVal;
+	float	idfVal;	
+
+} WordStruct;
+
+
+WordStruct *newWordStruct(char* word){
+
+	WordStruct *w;
+	w = malloc(sizeof(WordStruct));
+
+	w->word = word;
+	w->urls = NULL;
+	w->nUrls = 0;
+	w->tfVal = NULL;
+	w->idfVal = 0.0;
+
+	return w;
+}
+
+
+
+/* function prototype declarations */
+Set getURLSet(char *string);
 char **getURLArr(char *string);
 char * urlsWithWord(char * string);
+int needRemoveURL(char *url, Set rURL, Set tSet);
+void printStringArr(char ** arr, int n);
+void fillURLs(WordStruct *w);
+int countWordInURL(char ** array, char* word, int size);
+void calcTF(WordStruct *w);
+void calcIDF(WordStruct *w, int  numURLTot, int numUrls);
+Set getFinURLSet(WordStruct * wsArray, int n);
+int findURLPos(char * url, char **allURLs, int numURLs);
+float calcTFIDF(WordStruct *wArr, int nWords, char *url);
+int findHighRem(int *seen, float *vals, int num);
+void printResults(char **allURL, float * prV, int num);
+
+
+
+
+
 
 int main(int argc, char const *argv[])
 {
@@ -35,10 +79,7 @@ int main(int argc, char const *argv[])
     // read the command line arguments
     if (argc > 1) {
     	int i;
-    	printf("\n%s\n", "Command line arguments:");
-    	for (i = 1; i <= nWords; i++)	{
-    		printf("%i ", i);
-    		printf("%s\n", argv[i]);
+    	for (i = 1; i <= nWords; i++) {
 
     		// put words in array
     		int len = strlen(argv[i]);
@@ -46,40 +87,116 @@ int main(int argc, char const *argv[])
     		strcpy(wordsSearched[i-1], argv[i]);
 
     		printf("Inserting into array: %s\n", wordsSearched[i-1]);
+
+    		// all words are in the wordsSearched array now
     		
     	}
     }
 
-    char *curWord = malloc(15);					//var to iterate through words searched for				
-	strcpy(curWord, wordsSearched[0]);			//start with very first word searched
+    WordStruct * wordsArray = malloc(nWords*sizeof(WordStruct));
 
-	Set relURLs = getURLSet(curWord);				//set of URLs containing first word
-	char **firstURLs = getURLArr(curWord);		//array of URLs containing first word
-	int nURLs = nElems(relURLs);
+    int numURLTot = numWords(getAllURLs());
+    
 
-	printf("Printing Base RelURLS\n");
-	showSet(relURLs);
+    for (int i = 0; i < nWords; ++i)
+    {
+    	wordsArray[i] = *newWordStruct(wordsSearched[i]);
+
+    	fillURLs(&wordsArray[i]);
+    	printStringArr(wordsArray[i].urls, wordsArray[i].nUrls);
+
+    }
+
+
+    Set urlSet = getFinURLSet(wordsArray, nWords);
+    int numFinURL = nElems(urlSet);
+
+    char **finalURLs = malloc(numFinURL * sizeof(char *));
+    finalURLs = getElemArr(urlSet);
+
+	float *tfidfVals = malloc(numFinURL * sizeof(float));
+
+
+	for (int i = 0; i < nWords; ++i)
+    {
+
+    	calcTF(&wordsArray[i]);
+    	calcIDF(&wordsArray[i], numURLTot, wordsArray[i].nUrls);
+    }
+    printStringArr(finalURLs, numFinURL);
+
+    for (int i = 0; i < numFinURL; ++i)
+    {
+
+    	tfidfVals[i] = calcTFIDF(wordsArray, nWords, finalURLs[i]);
+    	printf("%d, %d\n", i, numURLTot);
+    }
+
+    printResults(finalURLs, tfidfVals, numFinURL);
 
 
 
+	/*
 
+	NODIG IDF per woord:
 
+	1. aantal documenten waarin het woord voorkomt; ...
+	2. totaal aantal documenten; numURLTot
 
+	*/
 
-    int numOfURLs = 0;
-
-    // determine number of URLs
-    FILE *collection = fopen("collection.txt", "r");
-    // do something; count nr of URLs
-    fclose(collection);
-
-    // determine what URLs contain word
-    collection = fopen("invertedIndex.txt", "r");
-
+	return 0;
 
 }
 
 /* helper functions */
+
+void printResults(char **allURL, float * prV, int num)
+{
+	int sortedURLs[num];
+	int seen[num];
+
+	//has to set all values to 0 because compiler not happy
+	for (int i = 0; i < num; ++i)
+	{
+		sortedURLs[i] = 0;
+		seen[i] = 0;
+	}
+
+	int ins = 0;	//to hold position of highest PR value not already added to sortedURLs
+
+	int cnt = 0;
+	while(cnt < num)	//fill list sortedURLs with URLs in descending PR order
+	{
+		ins = findHighRem(seen, prV, num);	//get highest remaining PR
+		seen[ins] = 1;						//add index "ins" to seen list
+		sortedURLs[cnt] = ins;				//mark index "ins" as next highest PR
+		cnt++;
+	}
+
+
+	int nextURL = sortedURLs[0];
+	for (int i = 0; (i < num && i < 10); i++)
+	{
+		nextURL = sortedURLs[i];					//index of ith highest PR value
+		printf("%s, %.6f\n", allURL[nextURL], prV[nextURL]);			//print all wanted data to stdout
+	}
+}
+
+int findHighRem(int *seen, float *vals, int num)
+{
+	int pos = 0;
+	for (int x = 0; x < num; x++)	//set pos to least val index
+	{
+		if(vals[x] < vals[pos]) pos = x;
+	}
+	for (int i = 0; i < num; i++)	//work pos up list to highest unused value
+	{
+		if(vals[i] >= vals[pos] && !seen[i]) pos = i;
+	}
+
+	return pos;
+}
 
 //takes word to search for
 //returns set of all URLs containing the word
@@ -105,6 +222,35 @@ Set getURLSet(char *string)
 
 	return s;
 }
+
+//takes already filled array of indices
+//combines already filled sets into superset
+Set getFinURLSet(WordStruct * wsArray, int n)
+{
+	Set s = newSet();
+
+	char **urlArr = malloc(n*sizeof(char *));
+	WordStruct ws;
+
+
+	for (int i = 0; i < n; i++)
+	{
+		ws = wsArray[i];
+		urlArr = ws.urls;
+
+
+		for (int j = 0; j < ws.nUrls; j++)
+		{
+
+			insertInto(s, urlArr[j]);
+		}
+					printf("%d, %d\n",i, n );
+
+	}
+
+	return s;
+}
+
 
 
 //takes word to search for
@@ -190,16 +336,119 @@ char * urlsWithWord(char * string)
 
 
 
+// takes a URL as parameter and returns whether
+// should remove from relURLs
+int needRemoveURL(char *url, Set rURL, Set tSet)
+{
+	return (isElem(rURL, url) && !isElem(tSet, url));
+}
 
-// gcc searchTfIdf.c -o searchTfIdf
+void fillURLs(WordStruct *w){
+	char* urls = urlsWithWord(w->word);
+	int n = numWords(urls);
+	char **urlArr = parseStringBySpaces(urls);
+
+	w->nUrls = n;
+	w->urls = urlArr;
+
+}
+
+void printStringArr(char ** arr, int n) 
+{
+
+	printf("\n\nTesting: %d\n", n);
+
+	for (int i = 0; i < n; i++)
+	{
+		printf("%s\n", arr[i]);
+	}
+}
 
 
+void calcTF(WordStruct *w) {
+
+	char* curURL = malloc(sizeof(char) * 6);
+
+	w->tfVal = malloc(sizeof(float) * w->nUrls);
+
+	for (int i = 0; i < w->nUrls; ++i)
+	{
+		strcpy(curURL, w->urls[i]);
+
+		char* allWords = malloc(BUFSIZE);
+		strcpy(allWords, wordsInURL(curURL));
+
+		int n = numWords(allWords);
+
+		char **wordsArr = parseStringBySpaces(allWords);
+		int countOfWord = countWordInURL(wordsArr, w->word, n);
+
+		float value = (float)countOfWord / n;
+		w->tfVal[i] = value;
+
+		printf("tf value: %.6f\n", w->tfVal[i]);
+
+	}
+
+}
+
+void calcIDF(WordStruct *w, int  numURLTot, int numUrls) {
+
+	float value = log10((float)numURLTot/numUrls);
+	w->idfVal = value;
+
+	printf("idf value: %.6f\n", w->idfVal);
+
+}
+
+int countWordInURL(char ** array, char* word, int size) {
+	
+	int count = 0;
+
+	for (int i = 0; i < size; ++i)
+	{
+		if(strcmp(array[i], word) == 0) {
+			count++;
+		}
+	}
+
+	return count;
+
+}
+
+float calcTFIDF(WordStruct *wArr, int nWords, char *url) {
+	
+	WordStruct w;
+	int pos = -1;
+	float sum = 0;
+	for (int i = 0; i < nWords; ++i)
+	{
+		w = wArr[i];
+		pos = findURLPos(url, w.urls, w.nUrls);
+		if(pos != -1){
+			sum += w.tfVal[pos] * w.idfVal;
+		}
+	}
+	return sum;
+
+}
 
 
+//find the index in allURLs that url is found in
+int findURLPos(char * url, char **allURLs, int numURLs)
+{
+	int pos;
 
-//void getIDF
+	for (pos = 0; pos < numURLs; pos++)
+	{
+		if (strcmp(url, allURLs[pos]) == 0)
+		{
+			return pos;
+		}
+	}
 
-
+	return -1;
+}
 
 
 
