@@ -71,7 +71,7 @@ int main(int argc, char const *argv[])
     }
 
     int nWords = argc-1;
-	char **wordsSearched = malloc(nWords * sizeof(char *));		//array of words to look for
+	char **wordsSearched = malloc(nWords * sizeof(char *));		// array of words to look for
 
     // read the command line arguments
     if (argc > 1) {
@@ -84,7 +84,16 @@ int main(int argc, char const *argv[])
     		strcpy(wordsSearched[i-1], argv[i]);
 
     		// all words are in the wordsSearched array now
-    		
+
+    		for (int i = 0; i < wordsSearched; ++i)
+    		{
+    			// check if word exists in urls (loop through wordsSearched)
+    				// delete from array
+    				// if not, decrement nWords(!)
+
+    			// check if array is not empty after removing element, if so return 0;
+    			// and print something like "no matching urls found"
+    		}
     	}
     }
 
