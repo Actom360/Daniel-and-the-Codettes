@@ -94,6 +94,10 @@ int main(int argc, char const *argv[])
     			// check if array is not empty after removing element, if so return 0;
     			// and print something like "no matching urls found"
     		}
+
+    		// .. could also filter this* out before even putting it into wordsSearched
+    		// *the words that are not in any url
+    		
     	}
     }
 
