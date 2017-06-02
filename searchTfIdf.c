@@ -26,7 +26,7 @@ typedef struct WordStruct {
 } WordStruct;
 
 
-WordStruct *newWordStruct(char* word){
+WordStruct *newWordStruct(char* word) {
 
 	WordStruct *w;
 	w = malloc(sizeof(WordStruct));
@@ -73,9 +73,6 @@ int main(int argc, char const *argv[])
     int nWords = argc-1;
 	char **wordsSearched = malloc(nWords * sizeof(char *));		//array of words to look for
 
-	printf("Number of words: %i\n", nWords);
-
-
     // read the command line arguments
     if (argc > 1) {
     	int i;
@@ -86,8 +83,6 @@ int main(int argc, char const *argv[])
     		wordsSearched[i-1] = malloc(len * sizeof(char));
     		strcpy(wordsSearched[i-1], argv[i]);
 
-    		printf("Inserting into array: %s\n", wordsSearched[i-1]);
-
     		// all words are in the wordsSearched array now
     		
     	}
@@ -96,17 +91,15 @@ int main(int argc, char const *argv[])
     WordStruct * wordsArray = malloc(nWords*sizeof(WordStruct));
 
     int numURLTot = numWords(getAllURLs());
-    
 
     for (int i = 0; i < nWords; ++i)
     {
     	wordsArray[i] = *newWordStruct(wordsSearched[i]);
 
     	fillURLs(&wordsArray[i]);
-    	printStringArr(wordsArray[i].urls, wordsArray[i].nUrls);
+    	// printStringArr(wordsArray[i].urls, wordsArray[i].nUrls);
 
     }
-
 
     Set urlSet = getFinURLSet(wordsArray, nWords);
     int numFinURL = nElems(urlSet);
@@ -116,41 +109,29 @@ int main(int argc, char const *argv[])
 
 	float *tfidfVals = malloc(numFinURL * sizeof(float));
 
-
 	for (int i = 0; i < nWords; ++i)
     {
 
     	calcTF(&wordsArray[i]);
     	calcIDF(&wordsArray[i], numURLTot, wordsArray[i].nUrls);
     }
-    printStringArr(finalURLs, numFinURL);
+    // printStringArr(finalURLs, numFinURL);
 
     for (int i = 0; i < numFinURL; ++i)
     {
 
     	tfidfVals[i] = calcTFIDF(wordsArray, nWords, finalURLs[i]);
-    	printf("%d, %d\n", i, numURLTot);
+    	// printf("%d, %d\n", i, numURLTot);
     }
 
     printResults(finalURLs, tfidfVals, numFinURL);
-
-
-
-	/*
-
-	NODIG IDF per woord:
-
-	1. aantal documenten waarin het woord voorkomt; ...
-	2. totaal aantal documenten; numURLTot
-
-	*/
 
 	return 0;
 
 }
 
-/* helper functions */
 
+/* helper functions */
 void printResults(char **allURL, float * prV, int num)
 {
 	int sortedURLs[num];
@@ -163,14 +144,14 @@ void printResults(char **allURL, float * prV, int num)
 		seen[i] = 0;
 	}
 
-	int ins = 0;	//to hold position of highest PR value not already added to sortedURLs
+	int ins = 0;		// to hold position of highest PR value not already added to sortedURLs
 
 	int cnt = 0;
-	while(cnt < num)	//fill list sortedURLs with URLs in descending PR order
+	while(cnt < num)	// fill list sortedURLs with URLs in descending PR order
 	{
-		ins = findHighRem(seen, prV, num);	//get highest remaining PR
-		seen[ins] = 1;						//add index "ins" to seen list
-		sortedURLs[cnt] = ins;				//mark index "ins" as next highest PR
+		ins = findHighRem(seen, prV, num);	// get highest remaining PR
+		seen[ins] = 1;						// add index "ins" to seen list
+		sortedURLs[cnt] = ins;				// mark index "ins" as next highest PR
 		cnt++;
 	}
 
@@ -178,8 +159,8 @@ void printResults(char **allURL, float * prV, int num)
 	int nextURL = sortedURLs[0];
 	for (int i = 0; (i < num && i < 10); i++)
 	{
-		nextURL = sortedURLs[i];					//index of ith highest PR value
-		printf("%s, %.6f\n", allURL[nextURL], prV[nextURL]);			//print all wanted data to stdout
+		nextURL = sortedURLs[i];					// index of ith highest PR value
+		printf("%s, %.6f\n", allURL[nextURL], prV[nextURL]);			// print all wanted data to stdout
 	}
 }
 
@@ -244,7 +225,7 @@ Set getFinURLSet(WordStruct * wsArray, int n)
 
 			insertInto(s, urlArr[j]);
 		}
-					printf("%d, %d\n",i, n );
+		// printf("%d, %d\n",i, n );
 
 	}
 
@@ -343,7 +324,8 @@ int needRemoveURL(char *url, Set rURL, Set tSet)
 	return (isElem(rURL, url) && !isElem(tSet, url));
 }
 
-void fillURLs(WordStruct *w){
+void fillURLs(WordStruct *w)
+{
 	char* urls = urlsWithWord(w->word);
 	int n = numWords(urls);
 	char **urlArr = parseStringBySpaces(urls);
@@ -365,8 +347,8 @@ void printStringArr(char ** arr, int n)
 }
 
 
-void calcTF(WordStruct *w) {
-
+void calcTF(WordStruct *w)
+{
 	char* curURL = malloc(sizeof(char) * 6);
 
 	w->tfVal = malloc(sizeof(float) * w->nUrls);
@@ -386,23 +368,23 @@ void calcTF(WordStruct *w) {
 		float value = (float)countOfWord / n;
 		w->tfVal[i] = value;
 
-		printf("tf value: %.6f\n", w->tfVal[i]);
+		// printf("tf value: %.6f\n", w->tfVal[i]);
 
 	}
 
 }
 
-void calcIDF(WordStruct *w, int  numURLTot, int numUrls) {
-
+void calcIDF(WordStruct *w, int  numURLTot, int numUrls)
+{
 	float value = log10((float)numURLTot/numUrls);
 	w->idfVal = value;
 
-	printf("idf value: %.6f\n", w->idfVal);
+	// printf("idf value: %.6f\n", w->idfVal);
 
 }
 
-int countWordInURL(char ** array, char* word, int size) {
-	
+int countWordInURL(char ** array, char* word, int size)
+{	
 	int count = 0;
 
 	for (int i = 0; i < size; ++i)
@@ -416,8 +398,8 @@ int countWordInURL(char ** array, char* word, int size) {
 
 }
 
-float calcTFIDF(WordStruct *wArr, int nWords, char *url) {
-	
+float calcTFIDF(WordStruct *wArr, int nWords, char *url)
+{
 	WordStruct w;
 	int pos = -1;
 	float sum = 0;
@@ -449,21 +431,3 @@ int findURLPos(char * url, char **allURLs, int numURLs)
 
 	return -1;
 }
-
-
-
-// calculate TF; how frequently a term occurs in a document
-
-/*
-what about the length of the document? could influence this;
-to normalize this: 
-TF(t) = (Number of times term t appears in a document) / (Total number of terms in the document).
-*/
-
-// calculate IDF; how important a term is
-
-/*
-- calculate total amount of documents
-- calculate in how many documents the term appears
-
-*/
