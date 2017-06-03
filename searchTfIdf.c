@@ -31,7 +31,7 @@ int main(int argc, char const *argv[])
 
 	printf("Number of words: %i\n", nWords);
 
-
+	printf("\n\ndont fail me yet\n");
     // read the command line arguments
     if (argc > 1) {
     	int i;
@@ -54,8 +54,8 @@ int main(int argc, char const *argv[])
 	strcpy(curWord, wordsSearched[0]);			//start with very first word searched
 
 	Set relURLs = getURLSet(curWord);				//set of URLs containing first word
-	char **firstURLs = getURLArr(curWord);		//array of URLs containing first word
-	int nURLs = nElems(relURLs);
+	// char **firstURLs = getURLArr(curWord);		//array of URLs containing first word
+	// int nURLs = nElems(relURLs);
 
 	printf("Printing Base RelURLS\n");
 	showSet(relURLs);
@@ -66,7 +66,7 @@ int main(int argc, char const *argv[])
 
 
 
-    int numOfURLs = 0;
+    // int numOfURLs = 0;
 
     // determine number of URLs
     FILE *collection = fopen("collection.txt", "r");

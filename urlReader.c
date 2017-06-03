@@ -73,7 +73,7 @@ char *getValidURLs(char *allURLs)
 
 }
 
-char* getAllURLs(int n) //store all URLs in collection.txt in one large String with spaces between 
+char* getAllURLs() //store all URLs in collection.txt in one large String with spaces between 
 {
 	FILE *coll = fopen("collection.txt", "r"); 	//open file
 

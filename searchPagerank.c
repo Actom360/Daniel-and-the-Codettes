@@ -154,6 +154,7 @@ int findHighRem(int *seen, float *vals, int num)
 	return pos;
 }
 
+
 float findPRVal(char *url)
 {
 	char *info = findPRLine(url);
@@ -248,6 +249,9 @@ int needRemoveURL(char *url, Set rURL, Set tSet)
 	return (isElem(rURL, url) && !isElem(tSet, url));
 }
 
+
+
+
 //takes word to search for
 //returns set of all URLs containing the word
 Set getURLSet(char *string)
@@ -272,6 +276,9 @@ Set getURLSet(char *string)
 
 	return s;
 }
+
+
+
 
 
 //takes word to search for

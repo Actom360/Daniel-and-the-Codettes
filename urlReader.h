@@ -24,6 +24,7 @@ char * wordsInURL(char * url);
 //takes input string and removes invalid URLs				
 char *getValidURLs(char *allURLs);
 
+char * makeURLFile(char * url);
 
 
 
